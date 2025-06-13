@@ -1,12 +1,8 @@
 # Global settings
 global:
   image:
-    tag: latest
+    tag: v4.0
     pullPolicy: IfNotPresent
-
-# Image pull secrets for private registries
-imagePullSecrets:
-  - name: quay-pull-secret
 
 # Frontend Configuration
 frontend:
@@ -14,10 +10,10 @@ frontend:
   replicaCount: 1
   image:
     repository: quay.io/s0926760809/fintech-demo/frontend
-    tag: "v1.8"
+    tag: "v4.0"
   service:
     port: 80
-    targetPort: 80
+    targetPort: 8080
 
 # Backend Services Common Configuration
 backend:
@@ -27,7 +23,7 @@ backendServices:
   - name: trading-api
     image:
       repository: quay.io/s0926760809/fintech-demo/trading-api
-      tag: v1.0
+      tag: v4.0
     service:
       port: 8080
       targetPort: 8080
@@ -49,7 +45,7 @@ backendServices:
   - name: risk-engine
     image:
       repository: quay.io/s0926760809/fintech-demo/risk-engine
-      tag: v1.0
+      tag: v4.0
     service:
       port: 8081
       targetPort: 8081
@@ -69,7 +65,7 @@ backendServices:
   - name: payment-gateway
     image:
       repository: quay.io/s0926760809/fintech-demo/payment-gateway
-      tag: v1.0
+      tag: v4.0
     service:
       port: 8082
       targetPort: 8082
@@ -89,7 +85,7 @@ backendServices:
   - name: audit-service
     image:
       repository: quay.io/s0926760809/fintech-demo/audit-service
-      tag: v1.0
+      tag: v4.0
     service:
       port: 8083
       targetPort: 8083
