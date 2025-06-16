@@ -145,7 +145,7 @@ const SecurityTesting: React.FC = () => {
   const executeComprehensiveTest = async () => {
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:30080/api/v1/security/test/comprehensive', {
+      const response = await axios.post('/api/v1/security/test/comprehensive', {
         test_suite: ['command_injection', 'file_access', 'sensitive_data', 'sql_injection'],
         severity: 'high',
       }, {

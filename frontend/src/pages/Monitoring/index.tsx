@@ -112,10 +112,10 @@ const Monitoring: React.FC = () => {
 
   // 服務配置
   const serviceConfigs = [
-    { name: 'Trading API', url: 'http://localhost:30080/health', port: 30080 },
-    { name: 'Risk Engine', url: 'http://localhost:30081/health', port: 30081 },
-    { name: 'Payment Gateway', url: 'http://localhost:30082/health', port: 30082 },
-    { name: 'Audit Service', url: 'http://localhost:30083/health', port: 30083 },
+    { name: 'Trading API', url: '/api/v1/system/health', port: 8080 },
+    { name: 'Risk Engine', url: '/api/risk/health', port: 8081 },
+    { name: 'Payment Gateway', url: '/api/payment/health', port: 8082 },
+    { name: 'Audit Service', url: '/api/audit/health', port: 8083 },
   ];
 
   // 獲取服務健康狀態和詳細指標

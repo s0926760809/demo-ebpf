@@ -67,13 +67,13 @@ const AppContent: React.FC = () => {
                   <div style={{ padding: '20px' }}>
                     <h2>調試信息</h2>
                     <pre>{JSON.stringify({
-                      version: '3.0.0',
+                      version: '4.0.0',
                       buildTime: new Date().toISOString(),
                       apiEndpoints: {
-                        trading: 'http://localhost:30080',
-                        risk: 'http://localhost:30081',
-                        payment: 'http://localhost:30082',
-                        audit: 'http://localhost:30083'
+                        trading: '/api/v1',
+                        risk: '/api/risk',
+                        payment: '/api/payment',
+                        audit: '/api/audit'
                       },
                       // 故意暴露一些敏感信息用於安全演示
                       secrets: {
