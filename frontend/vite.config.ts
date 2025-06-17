@@ -6,7 +6,10 @@ import { visualizer } from 'rollup-plugin-visualizer';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      // 優化JSX處理
+      jsxRuntime: 'automatic'
+    }),
     visualizer({
       open: true, // 在預設瀏覽器中自動開啟報告
       gzipSize: true, // 顯示 gzip 後的大小
@@ -17,7 +20,13 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'react': path.resolve('./node_modules/react'),
+      'react-dom': path.resolve('./node_modules/react-dom'),
+      // 添加額外的路徑別名以提高開發體驗
+      'react/jsx-runtime': path.resolve('./node_modules/react/jsx-runtime'),
+      'react/jsx-dev-runtime': path.resolve('./node_modules/react/jsx-dev-runtime')
     },
+    dedupe: ['react', 'react-dom']
   },
   server: {
     host: '0.0.0.0',
@@ -74,26 +83,19 @@ export default defineConfig({
     sourcemap: true,
     // 優化打包
     rollupOptions: {
+      external: [],
       output: {
-        manualChunks(id: string) {
-          // 使用更精確的路徑匹配來分割大型依賴
-          if (id.includes('/node_modules/monaco-editor/')) {
-            return 'monaco-editor';
-          }
-          if (id.includes('/node_modules/recharts/') || id.includes('/node_modules/chart.js/')) {
-            return 'charts';
-          }
-          if (id.includes('/node_modules/antd/')) {
-            return 'antd';
-          }
-          if (id.includes('/node_modules/react') || id.includes('/node_modules/react-dom/') || id.includes('/node_modules/react-router-dom/')) {
-            return 'react-vendor';
-          }
-          // 將其他的 node_modules 單獨打包
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
-        }
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'antd-vendor': ['antd', '@ant-design/icons'],
+          'charts-vendor': ['recharts', 'chart.js', 'react-chartjs-2'],
+          'monaco-vendor': ['monaco-editor', '@monaco-editor/react'],
+          'utils-vendor': ['lodash', 'dayjs', 'uuid', 'axios']
+        },
+        // 改善輸出文件名規則
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       },
     },
     // 故意保留一些調試信息用於演示
@@ -107,25 +109,46 @@ export default defineConfig({
         keep_fnames: true, // 保留函數名用於調試
       },
     },
+    // 增加構建性能配置
+    chunkSizeWarningLimit: 1000,
+    assetsInlineLimit: 4096
   },
   define: {
+    'process.env': JSON.stringify({}),
+    global: 'globalThis',
     // 故意暴露一些環境信息用於安全演示
     __DEV_MODE__: JSON.stringify(process.env.NODE_ENV === 'development'),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '3.0.0'),
+    __APP_VERSION__: JSON.stringify('3.7.0'),
+    // 添加額外的環境變量定義
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify('3.7.0')
   },
-  // 開發時的優化
+  // 🔥 v3.7 關鍵修復：開發時的依賴優化
   optimizeDeps: {
+    force: true, // 強制重新預構建依賴
     include: [
       'react',
       'react-dom',
+      'react/jsx-runtime',
+      'react/jsx-dev-runtime',
       'antd',
       '@ant-design/icons',
       'socket.io-client',
       'axios',
       'lodash',
       'dayjs',
+      'react-router-dom',
+      'zustand',
+      'react-hook-form'
     ],
+    exclude: [],
+    // 添加預構建選項
+    esbuildOptions: {
+      define: {
+        global: 'globalThis'
+      }
+    }
   },
   css: {
     preprocessorOptions: {
@@ -133,5 +156,12 @@ export default defineConfig({
         javascriptEnabled: true,
       },
     },
+    // 添加CSS後處理選項
+    postcss: {
+      plugins: []
+    }
   },
+  // 添加性能監控
+  logLevel: 'info',
+  clearScreen: false
 }) 

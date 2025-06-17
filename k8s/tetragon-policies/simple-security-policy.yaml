@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: simple-process-monitoring
+spec:
+  kprobes:
+  # 监控进程执行
+  - call: "security_bprm_check"
+    syscall: false
+    args:
+    - index: 0
+      type: "linux_binprm"
+    selectors:
+    - matchBinaries:
+      - operator: "In"
+        values:
+        - "/bin/sh"
+        - "/bin/bash"
+        - "/usr/bin/wget"
+        - "/usr/bin/curl" 
